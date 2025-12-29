@@ -32,3 +32,14 @@ async def login(data: LoginSchema):
             "user": {"username": data.username, "role": user["role"], "name": user["name"]}
         }
     raise HTTPException(status_code=401, detail="Sai tài khoản hoặc mật khẩu")
+
+
+
+#
+from app import create_app
+
+app = create_app()
+
+if __name__ == "__main__":
+    app.run(debug=True)
+#
