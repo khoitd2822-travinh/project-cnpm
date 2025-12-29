@@ -1,22 +1,39 @@
 from flask import Blueprint, request, jsonify
 
-# Tạo Blueprint để Flask nhận diện route
+# Tạo Blueprint
 auth_bp = Blueprint('auth', __name__)
 
 @auth_bp.route('/login', methods=['POST'])
 def login():
-    # Bước 2: Lấy email/pass từ trình duyệt gửi lên
+    from app import auth_service # Import bên trong hàm để tránh lỗi vòng lặp
     data = request.get_json()
     email = data.get('email')
     password = data.get('password')
 
-    # Bước 3: Gọi AuthService để xử lý logic
-    # Lưu ý: Trong app.py bạn sẽ khởi tạo auth_service này
     result = auth_service.login(email, password)
 
     if result:
-        # Bước 15: Trả về 200 OK và Role để React điều hướng
         return jsonify(result), 200
     else:
-        # Bước 13: Trả về 401 nếu sai mật khẩu
         return jsonify({"message": "Invalid email or password"}), 401
+    
+@auth_bp.route('/register', methods=['POST'])
+def register():
+    from app import auth_service # BẮT BUỘC PHẢI CÓ DÒNG NÀY Ở ĐÂY
+    
+    data = request.get_json()
+    email = data.get('email')
+    password = data.get('password')
+    full_name = data.get('full_name')
+
+    # Gọi service xử lý
+    result = auth_service.register(email, password, full_name)
+
+    if result:
+        return jsonify({"message": "Registration successful"}), 201
+    else:
+        return jsonify({"message": "Email already exists"}), 400
+
+@auth_bp.route('/test', methods=['GET'])
+def test():
+    return jsonify({"message": "Auth API hoạt động!"}), 200
