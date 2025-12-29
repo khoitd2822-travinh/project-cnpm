@@ -3,3 +3,4 @@ from infrastructure.Model import users_model, paper_model, assignment_model, aud
 
 def init_db(app):
     init_postgresql(app)
+    
