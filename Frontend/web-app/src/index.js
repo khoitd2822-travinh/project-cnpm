@@ -1,15 +1,13 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import { BrowserRouter } from 'react-router-dom' // Thêm dòng này
+import App from './App'
+import './index.css'
 
-
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
+ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
-
-
-// reportWebVitals();
+    <BrowserRouter> {/* Bao bọc App lại như thế này */}
+      <App />
+    </BrowserRouter>
+  </React.StrictMode>,
+)
