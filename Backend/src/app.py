@@ -1,56 +1,60 @@
 import sys
 import os
-from flask import Flask
+from flask import Flask, g
 from flask_cors import CORS
 
-# 1. Thiết lập đường dẫn hệ thống để nhận diện các thư mục trong 'src'
-current_dir = os.path.dirname(os.path.abspath(__file__))
-if current_dir not in sys.path:
-    sys.path.insert(0, current_dir)
+# ================== FIX IMPORT PATH ==================
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+if BASE_DIR not in sys.path:
+    sys.path.insert(0, BASE_DIR)
 
+# ================== LỚP USER GIẢ LẬP ==================
+class User:
+    def __init__(self, user_id, username, password, role):
+        self.user_id = user_id
+        self.username = username
+        self.password = password
+        self.role = role
+
+# ================== FLASK APP ==================
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}})
 
-# 2. IMPORT BLUEPRINT TRƯỚC (Để tránh lỗi NameError: 'auth_bp' is not defined)
-try:
-    from api.controllers.auth_controller import auth_bp
-except ImportError as e:
-    print(f"--- Lỗi không tìm thấy auth_controller: {e} ---")
-    auth_bp = None
+# ================== DATABASE ==================
+from infrastructure.databases.postgresql import init_postgresql, SessionLocal
+init_postgresql(app)
 
-# 3. KHỞI TẠO SERVICE & REPOSITORY
-try:
-    from infrastructure.persistence.user_repository import UserRepository
-    from infrastructure.persistence.audit_repository import AuditRepository
-    from services.auth_service import AuthService
+from infrastructure.persistence.user_repository import UserRepository
+from infrastructure.persistence.audit_repository import AuditRepository
+from services.auth_service import AuthService
 
-    # Khởi tạo các thành phần
-    user_repository = UserRepository()
-    audit_repository = AuditRepository()
-    
-    # Biến auth_service để các Controller có thể 'from app import auth_service'
-    auth_service = AuthService(user_repo=user_repository, audit_repo=audit_repository)
-    print("--- Khởi tạo AuthService thành công ---")
+# Ghi đè để chắc chắn UserRepository không đòi hỏi sai tham số
+UserRepository.__init__ = lambda self, db_session: setattr(self, 'db_session', db_session)
 
-except Exception as e:
-    print(f"--- Lỗi khởi tạo Service: {e} ---")
-    class MockService:
-        def register(self, *args, **kwargs): return True
-        def login(self, *args, **kwargs): return {"role": "user"}
-    auth_service = MockService()
+def get_auth_service():
+    if "auth_service" not in g:
+        db_session = SessionLocal()
+        g.db_session = db_session
+        g.auth_service = AuthService(
+            user_repo=UserRepository(db_session),
+            audit_repo=AuditRepository(db_session),
+            db_session=db_session
+        )
+    return g.auth_service
 
-# 4. ĐĂNG KÝ BLUEPRINT VÀO APP (Chỉ đăng ký một lần)
-if auth_bp:
-    app.register_blueprint(auth_bp, url_prefix='/auth')
+@app.teardown_appcontext
+def close_db_session(exception=None):
+    db_session = g.pop("db_session", None)
+    if db_session:
+        db_session.close()
 
-@app.route('/')
+from api.controllers.auth_controller import auth_bp
+auth_bp.auth_service_factory = get_auth_service
+app.register_blueprint(auth_bp, url_prefix="/auth")
+
+@app.route("/")
 def health_check():
-    return "Backend UTH-ConfMS đã sẵn sàng!"
+    return "Hệ thống đã sẵn sàng!"
 
-if __name__ == '__main__':
-    # In ra danh sách các link để kiểm tra
-    print("\nCác đường dẫn API hiện có:")
-    for rule in app.url_map.iter_rules():
-        print(f"Link: {rule}")
-    
-    app.run(debug=True, host='127.0.0.1', port=5000)
+if __name__ == "__main__":
+    app.run(debug=True, host="0.0.0.0", port=5000)

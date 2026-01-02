@@ -1,39 +1,58 @@
 from flask import Blueprint, request, jsonify
 
-# Tạo Blueprint
-auth_bp = Blueprint('auth', __name__)
+auth_bp = Blueprint("auth", __name__)
 
-@auth_bp.route('/login', methods=['POST'])
-def login():
-    from app import auth_service # Import bên trong hàm để tránh lỗi vòng lặp
-    data = request.get_json()
-    email = data.get('email')
-    password = data.get('password')
-
-    result = auth_service.login(email, password)
-
-    if result:
-        return jsonify(result), 200
-    else:
-        return jsonify({"message": "Invalid email or password"}), 401
-    
 @auth_bp.route('/register', methods=['POST'])
 def register():
-    from app import auth_service # BẮT BUỘC PHẢI CÓ DÒNG NÀY Ở ĐÂY
-    
     data = request.get_json()
-    email = data.get('email')
-    password = data.get('password')
-    full_name = data.get('full_name')
+    
+    # Lấy thêm trường 'role' từ dữ liệu gửi lên, mặc định là 'author'
+    role_requested = data.get('role', 'author') 
+    
+    auth_service = auth_bp.auth_service_factory()
+    
+    # Truyền role_requested vào service
+    success = auth_service.register(
+        email=data.get('email'),
+        password=data.get('password'),
+        full_name=data.get('full_name'),
+        role=role_requested 
+    )
+    
+    if success:
+        return jsonify({"message": "User registered successfully"}), 201
+    return jsonify({"error": "Register failed"}), 400
 
-    # Gọi service xử lý
-    result = auth_service.register(email, password, full_name)
 
-    if result:
-        return jsonify({"message": "Registration successful"}), 201
-    else:
-        return jsonify({"message": "Email already exists"}), 400
+@auth_bp.route("/login", methods=["POST"])
+def login():
+    print(">>> LOGIN API HIT")
+    try:
+        data = request.get_json()
+        print("DATA:", data)
 
-@auth_bp.route('/test', methods=['GET'])
-def test():
-    return jsonify({"message": "Auth API hoạt động!"}), 200
+        auth_service = auth_bp.auth_service_factory()
+
+        # result lúc này là một Object User
+        user = auth_service.login(
+            data.get("email"),
+            data.get("password")
+        )
+
+        print("RESULT OBJECT:", user)
+
+        if user:
+            # FIX LỖI Ở ĐÂY: Trả về từng trường dữ liệu thay vì trả về cả Object user
+            return jsonify({
+                "message": "Login successful",
+                "token": "fake-jwt-token-for-now", 
+                "role": getattr(user, 'role', 'author'), # Lấy role từ object user
+                "full_name": getattr(user, 'full_name', ''),
+                "email": getattr(user, 'email', '')
+            }), 200
+            
+        return jsonify({"message": "Email hoặc mật khẩu không đúng"}), 401
+        
+    except Exception as e:
+        print(f"🔥 CRITICAL ERROR IN LOGIN: {e}")
+        return jsonify({"message": "Lỗi hệ thống nội bộ"}), 500

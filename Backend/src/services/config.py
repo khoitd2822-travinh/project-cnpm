@@ -1,70 +1,51 @@
-# Configuration settings for the Flask application
-
 import os
 
 class Config:
     """Base configuration."""
-    SECRET_KEY = os.environ.get('SECRET_KEY') or 'a_default_secret_key'
-    DEBUG = os.environ.get('DEBUG', 'False').lower() in ['true', '1']
-    TESTING = os.environ.get('TESTING', 'False').lower() in ['true', '1']
-    DATABASE_URI = os.environ.get('DATABASE_URI') or 'postgresql+psycopg2://postgres:1234@127.0.0.1:5432/postgres'
+    # Khóa bí mật để mã hóa Token
+    SECRET_KEY = os.environ.get('SECRET_KEY') or 'uth_conf_ms_secret_key_2026'
+    
+    # Cấu hình Database - HÃY KIỂM TRA MẬT KHẨU TẠI ĐÂY
+    # Cấu trúc: postgresql+psycopg2://user:password@host:port/dbname
+    # Tôi đổi localhost thành 127.0.0.1 để tránh lỗi IPv6 (::1) mà bạn gặp trong log
+    DB_USER = os.environ.get('DB_USER') or 'postgres'
+    DB_PASSWORD = os.environ.get('DB_PASSWORD') or '1234'  # <--- THAY MẬT KHẨU THẬT Ở ĐÂY
+    DB_HOST = os.environ.get('DB_HOST') or '127.0.0.1'
+    DB_PORT = os.environ.get('DB_PORT') or '5432'
+    DB_NAME = os.environ.get('DB_NAME') or 'postgres' # Đảm bảo tên DB này tồn tại trong pgAdmin
+
+    DATABASE_URI = f'postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}'
+    
+    DEBUG = False
+    TESTING = False
     CORS_HEADERS = 'Content-Type'
 
 class DevelopmentConfig(Config):
     """Development configuration."""
     DEBUG = True
-    DATABASE_URI = os.environ.get('DATABASE_URI') or 'postgresql+psycopg2://postgres:1234@127.0.0.1:5432/postgres'
-
 
 class TestingConfig(Config):
     """Testing configuration."""
     TESTING = True
-    DATABASE_URI = os.environ.get('DATABASE_URI') or 'postgresql+psycopg2://postgres:1234@127.0.0.1:5432/postgres'
-
 
 class ProductionConfig(Config):
     """Production configuration."""
-    DATABASE_URI = os.environ.get('DATABASE_URI') or 'postgresql+psycopg2://postgres:1234@127.0.0.1:5432/postgres'
-    
-template = {
-    "swagger": "2.0",
-    "info": {
-        "title": "Todo API",
-        "description": "API for managing todos",
-        "version": "1.0.0"
-    },
-    "basePath": "/",
-    "schemes": [
-        "http",
-        "https"
-    ],
-    "consumes": [
-        "application/json"
-    ],
-    "produces": [
-        "application/json"
-    ]
-}
+    DEBUG = False
+
+# Cấu hình Swagger cho tài liệu API
 class SwaggerConfig:
     """Swagger configuration."""
     template = {
         "swagger": "2.0",
         "info": {
-            "title": "Todo API",
-            "description": "API for managing todos",
+            "title": "UTH-ConfMS API",
+            "description": "API hệ thống quản lý hội nghị UTH",
             "version": "1.0.0"
         },
         "basePath": "/",
-        "schemes": [
-            "http",
-            "https"
-        ],
-        "consumes": [
-            "application/json"
-        ],
-        "produces": [
-            "application/json"
-        ]
+        "schemes": ["http", "https"],
+        "consumes": ["application/json"],
+        "produces": ["application/json"]
     }
 
     swagger_config = {
