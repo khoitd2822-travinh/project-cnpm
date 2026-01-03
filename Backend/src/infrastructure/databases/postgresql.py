@@ -3,14 +3,12 @@ from sqlalchemy.orm import sessionmaker
 from config import Config
 from infrastructure.databases.base import Base
 
-# PostgreSQL connection string
-# format: postgresql+psycopg2://user:password@host:port/dbname
 DATABASE_URI = Config.DATABASE_URI
 
 engine = create_engine(
     DATABASE_URI,
-    pool_pre_ping=True,   # prevent connection timeout
-    echo=False            #True neu muon log sql
+    pool_pre_ping=True,   
+    echo=False            
 )
 
 SessionLocal = sessionmaker(
