@@ -1,5 +1,5 @@
 from sqlalchemy import text
-from domain.user import User
+from src.domain.user import User
 
 class UserRepository:
     def __init__(self, db_session):

@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from config import Config
-from infrastructure.databases.base import Base
+from src.infrastructure.databases.base import Base
 
 DATABASE_URI = Config.DATABASE_URI
 

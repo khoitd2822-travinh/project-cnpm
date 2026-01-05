@@ -21,12 +21,12 @@ app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
 
 # ================== DATABASE ==================
-from infrastructure.databases.postgresql import init_postgresql, SessionLocal
+from src.infrastructure.databases.postgresql import init_postgresql, SessionLocal
 init_postgresql(app)
 
-from infrastructure.persistence.user_repository import UserRepository
-from infrastructure.persistence.audit_repository import AuditRepository
-from services.auth_service import AuthService
+from src.infrastructure.persistence.user_repository import UserRepository
+from src.infrastructure.persistence.audit_repository import AuditRepository
+from src.services.auth_service import AuthService
 
 # Ghi đè để chắc chắn UserRepository không đòi hỏi sai tham số
 UserRepository.__init__ = lambda self, db_session: setattr(self, 'db_session', db_session)
@@ -48,7 +48,7 @@ def close_db_session(exception=None):
     if db_session:
         db_session.close()
 
-from api.controllers.auth_controller import auth_bp
+from src.api.controllers.auth_controller import auth_bp
 auth_bp.auth_service_factory = get_auth_service
 app.register_blueprint(auth_bp, url_prefix="/auth")
 

@@ -1,8 +1,8 @@
 from flask import Blueprint, request, jsonify
 
 from application.use_cases.assign_paper_use_case import AssignPaperUseCase
-from infrastructure.repositories.paper_repository_impl import PaperRepository
-from infrastructure.repositories.reviewer_repository_impl import ReviewerRepository
+from src.infrastructure.repositories.paper_repository_impl import PaperRepository
+from src.infrastructure.repositories.reviewer_repository_impl import ReviewerRepository
 
 paper_bp = Blueprint("paper", __name__)
 
