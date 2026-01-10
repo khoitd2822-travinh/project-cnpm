@@ -70,6 +70,21 @@ CREATE TABLE IF NOT EXISTS audit_logs (
 );
 -- =============================
 -- DONE
+-- Tạo bảng hội nghị
+CREATE TABLE IF NOT EXISTS conferences (
+    conf_id SERIAL PRIMARY KEY,
+    title TEXT NOT NULL,
+    status TEXT DEFAULT 'upcoming' -- 'upcoming', 'ongoing', 'finished'
+);
+
+-- Tạo bảng bài báo (papers)
+CREATE TABLE IF NOT EXISTS papers (
+    paper_id SERIAL PRIMARY KEY,
+    title TEXT NOT NULL,
+    author_id INT REFERENCES users(user_id) ON DELETE CASCADE,
+    status TEXT DEFAULT 'Pending' -- Trạng thái: Chờ duyệt, Đã duyệt, v.v.
+);
 -- =============================
+ALTER TABLE users ADD COLUMN created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
 -- Xóa toàn bộ dữ liệu trong bảng users để đăng ký lại từ đầu
 TRUNCATE TABLE users RESTART IDENTITY CASCADE;
