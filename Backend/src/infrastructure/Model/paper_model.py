@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
-from infrastructure.databases.base import Base
+from src.infrastructure.databases.base import Base
 
 class paperModel(Base):
     __tablename__ = 'paper'

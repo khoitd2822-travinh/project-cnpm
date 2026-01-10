@@ -1,5 +1,5 @@
-from domain.entities.reviewer import Reviewer
-from domain.repositories.reviewer_repository import IReviewerRepository
+from src.domain.entities.reviewer import Reviewer
+from src.domain.repositories.reviewer_repository import IReviewerRepository
 
 _FAKE_REVIEWERS = {
     1: Reviewer(1, "Reviewer A"),

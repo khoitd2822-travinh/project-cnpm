@@ -1,46 +1,42 @@
+import os
+import sys
+
+# Tự động thêm thư mục cha vào hệ thống để nhận diện module 'src'
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
+
 from datetime import datetime, timedelta
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from infrastructure.databases.postgresql import SessionLocal
 from sqlalchemy import text
+
+# Bây giờ bạn có thể dùng 'from src...' mà không lo lỗi đường dẫn
+from infrastructure.databases.postgresql import init_postgresql, SessionLocal
 
 app = Flask(__name__)
 CORS(app)
 
-# --- HÀM TÍNH THỜI GIAN (ĐÃ SỬA LỖI LỆCH 7 GIỜ) ---
+# Khởi tạo DB
+init_postgresql(app)
+# --- HÀM TÍNH THỜI GIAN ---
 def human_time_diff(dt):
-    """Tính khoảng cách thời gian thực tế so với hiện tại, xử lý lệch múi giờ"""
     if not dt:
         return "Không rõ"
-    
-    # Lấy thời gian hiện tại
     now = datetime.now()
-    
-    # Nếu dt từ DB là UTC (lệch 7 tiếng so với VN), ta cộng thêm 7 tiếng trước khi so sánh
-    # Hoặc đơn giản là lấy hiệu số và trừ đi 7 giờ nếu nó quá lớn
     diff = now - dt
     seconds = int(diff.total_seconds())
 
-    # Nếu giây ra con số xấp xỉ 25200 (7 giờ), nghĩa là DB đang dùng UTC
-    # Ta điều chỉnh lại dt để khớp với local
     if seconds >= 25000 and seconds <= 25400:
         dt = dt + timedelta(hours=7)
         diff = now - dt
         seconds = int(diff.total_seconds())
     
-    # Xử lý hiển thị
-    if seconds < 5:
-        return "Vừa xong"
-    if seconds < 60:
-        return f"{seconds} giây trước"
-    if seconds < 3600:
-        return f"{seconds // 60} phút trước"
-    if seconds < 86400:
-        return f"{seconds // 3600} giờ trước"
-    
+    if seconds < 5: return "Vừa xong"
+    if seconds < 60: return f"{seconds} giây trước"
+    if seconds < 3600: return f"{seconds // 60} phút trước"
+    if seconds < 86400: return f"{seconds // 3600} giờ trước"
     return dt.strftime('%d/%m/%Y %H:%M')
 
-# --- XỬ LÝ ĐĂNG KÝ ---
+# --- ĐĂNG KÝ ---
 @app.route('/api/register', methods=['POST'])
 def register():
     data = request.json
@@ -56,7 +52,7 @@ def register():
             "em": data['email'],
             "pw": data['password'],
             "rl": data['role'],
-            "ca": datetime.now() # Lưu giờ theo giờ máy tính đang chạy (Local)
+            "ca": datetime.now()
         })
         db.commit()
         return jsonify({"status": "success"}), 201
@@ -66,7 +62,7 @@ def register():
     finally:
         db.close()
 
-# --- XỬ LÝ ĐĂNG NHẬP ---
+# --- ĐĂNG NHẬP ---
 @app.route('/api/login', methods=['POST'])
 def login():
     data = request.json
@@ -84,14 +80,12 @@ def login():
     finally:
         db.close()
 
-# --- THỐNG KÊ (FIX TRIỆT ĐỂ SỐ 45) ---
+# --- THỐNG KÊ ---
 @app.route('/api/admin/stats', methods=['GET'])
 def get_admin_stats():
     db = SessionLocal()
     try:
         user_count = db.execute(text("SELECT COUNT(*) FROM users")).scalar() or 0
-        
-        # Đếm thực tế từ bảng papers (nếu chưa có bảng sẽ trả về 0, không hiện 45)
         try:
             paper_count = db.execute(text("SELECT COUNT(*) FROM papers")).scalar() or 0
         except:
@@ -110,8 +104,8 @@ def get_admin_stats():
             "activities": [
                 {
                     "name": r[0], 
-                    "role": r[1].upper(), 
-                    "action": "Vừa gia nhập", 
+                    "role": r[1].upper() if r[1] else "USER", 
+                    "action": "Vừa tham gia", 
                     "time": human_time_diff(r[2]) 
                 } for r in recent
             ]
@@ -130,6 +124,7 @@ def get_admin_manage_users():
         ])
     finally:
         db.close()
+
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=5000, debug=True)

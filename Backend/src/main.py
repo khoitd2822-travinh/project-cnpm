@@ -1,8 +1,12 @@
+
 from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from sqlalchemy import text 
+from infrastructure.databases.postgresql import init_postgresql
+
 import uvicorn
 
 from infrastructure.databases.postgresql import SessionLocal
@@ -68,6 +72,17 @@ async def login(data: LoginSchema, db: Session = Depends(get_db)):
         }
     raise HTTPException(status_code=401, detail="Sai tài khoản hoặc mật khẩu")
 
+
 if __name__ == "__main__":
     # CHẠY TRÊN CỔNG 5000 KHỚP VỚI MÔI TRƯỜNG CỦA BẠN
     uvicorn.run(app, host="127.0.0.1", port=5000)
+
+@app.get("/")
+def root():
+    return {"message": "Backend is running"}
+
+if __name__ == '__main__':
+    print("--- ĐANG TỰ ĐỘNG TẠO BẢNG DATABASE ---")
+    init_postgresql()  # Gọi hàm này để nó tự tạo bảng users cho bạn
+    print("--- DATABASE ĐÃ SẴN SÀNG ---")
+    app.run(host='127.0.0.1', port=5000, debug=True)
