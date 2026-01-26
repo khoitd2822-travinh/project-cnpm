@@ -43,3 +43,29 @@ def setup_conf():
 def get_logs():
     logs = admin_service.get_logs() # Giả sử bạn đã viết hàm này trong service
     return jsonify([{"action": l[0], "time": l[1]} for l in logs])
+
+
+@app.get("/api/author/papers/{author_id}")
+async def get_author_papers(author_id: int, db: Session = Depends(get_db)):
+    try:
+        query = text("""
+            SELECT p.paper_id, p.title, p.status, p.score, p.comments
+            FROM papers p
+            WHERE p.author_id = :aid
+            ORDER BY p.paper_id DESC
+        """)
+        result = db.execute(query, {"aid": author_id}).fetchall()
+        
+        papers = []
+        for r in result:
+            papers.append({
+                "id": r[0],
+                "title": r[1],
+                "status": r[2],
+                "score": r[3],
+                "comment": r[4] if r[4] else ""
+            })
+        return papers
+    except Exception as e:
+        print(f"Lỗi: {e}")
+        return []
