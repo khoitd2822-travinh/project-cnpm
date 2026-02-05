@@ -2,24 +2,12 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Routes, Route, useNavigate } from 'react-router-dom'; 
 import './App.css';
+
+// IMPORT TẤT CẢ CÁC DASHBOARD
 import AdminDashboard from './AdminDashboard';
-
-const Dashboard = () => {
-  const navigate = useNavigate();
-  const role = localStorage.getItem('role');
-  const token = localStorage.getItem('token');
-
-  useEffect(() => {
-    if (!token) navigate('/');
-  }, [token, navigate]);
-
-  return (
-    <div style={{ padding: '50px', textAlign: 'center' }}>
-      <h1>Chào mừng {role} đã vào hệ thống!</h1>
-      <button onClick={() => { localStorage.clear(); navigate('/'); }}>Đăng xuất</button>
-    </div>
-  );
-};
+import AuthorDashboard from './AuthorDashboard';
+import ChairDashboard from './ChairDashboard';
+import ReviewerDashboard from './ReviewerDashboard';
 
 function AuthForm() {
   const [form, setForm] = useState({ email: '', password: '', full_name: '', role: 'author' });
@@ -47,18 +35,21 @@ function AuthForm() {
           username: form.email, 
           password: form.password
         });
+
         localStorage.setItem('token', res.data.token);
         localStorage.setItem('role', res.data.user.role);
+        localStorage.setItem('userId', res.data.user.id);
+        localStorage.setItem('userName', res.data.user.name);
         
         const checkRole = res.data.user.role.toLowerCase();
-        if (checkRole === 'admin' || checkRole === 'chair') {
-          navigate('/admin-dashboard');
-        } else {
-          navigate('/dashboard');
-        }
+        
+        if (checkRole === 'admin') navigate('/admin-dashboard');
+        else if (checkRole === 'author') navigate('/author-dashboard');
+        else if (checkRole === 'chair') navigate('/chair-dashboard');
+        else if (checkRole === 'reviewer') navigate('/reviewer-dashboard');
+        else navigate('/');
       }
     } catch (err) {
-      // HIỆN LỖI THẬT TỪ BACKEND
       const errorDetail = err.response?.data?.detail || "Không thể kết nối Server";
       setMsg("Thất bại: " + errorDetail);
     }
@@ -67,8 +58,20 @@ function AuthForm() {
   return (
     <div className="login-container">
       <form onSubmit={handleSubmit} className="login-form">
-        <h1>{isRegister ? "Đăng ký" : "UTH-ConfMS"}</h1>
-        <h3>(Hệ thống quản lý hội nghị)</h3>
+        {/* GIỮ NGUYÊN TIÊU ĐỀ VÀ THÊM DÒNG CHỮ DƯỚI */}
+        <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+            <h1 style={{ margin: 0 }}>UTH-ConfMS</h1>
+            <p style={{ 
+                fontSize: '18px', 
+                color: '#444', 
+                marginTop: '5px',
+                fontWeight: 'bold',    /* In đậm */
+                fontStyle: 'italic'    /* In nghiêng */
+            }}>
+                (Hệ thống quản lý hội nghị)
+            </p>
+        </div>
+
         {isRegister && (
           <>
             <input type="text" placeholder="Họ tên" className="input-field" onChange={e => setForm({...form, full_name: e.target.value})} required />
@@ -83,21 +86,32 @@ function AuthForm() {
         <input type="email" placeholder="Email" className="input-field" onChange={e => setForm({...form, email: e.target.value})} required />
         <input type="password" placeholder="Mật khẩu" className="input-field" onChange={e => setForm({...form, password: e.target.value})} required />
         <button type="submit" className="submit-btn">{isRegister ? "TẠO TÀI KHOẢN" : "ĐĂNG NHẬP"}</button>
-        <p style={{cursor:'pointer', color:'blue'}} onClick={() => setIsRegister(!isRegister)}>
+        <p style={{cursor:'pointer', color:'blue', textAlign: 'center'}} onClick={() => setIsRegister(!isRegister)}>
           {isRegister ? "Đã có tài khoản? Đăng nhập" : "Chưa có tài khoản? Đăng ký"}
         </p>
-        {msg && <p style={{color: msg.includes('Thất bại') ? 'red' : 'green'}}>{msg}</p>}
+        {msg && <p style={{textAlign: 'center', color: msg.includes('Thất bại') ? 'red' : 'green'}}>{msg}</p>}
       </form>
     </div>
   );
 }
 
+const UserProvider = ({ Component }) => {
+    const user = {
+        id: localStorage.getItem('userId'),
+        name: localStorage.getItem('userName'),
+        role: localStorage.getItem('role')
+    };
+    return <Component user={user} />;
+};
+
 function App() {
   return (
     <Routes>
       <Route path="/" element={<AuthForm />} />
-      <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/admin-dashboard" element={<AdminDashboard />} />
+      <Route path="/author-dashboard" element={<UserProvider Component={AuthorDashboard} />} />
+      <Route path="/chair-dashboard" element={<UserProvider Component={ChairDashboard} />} />
+      <Route path="/reviewer-dashboard" element={<UserProvider Component={ReviewerDashboard} />} />
     </Routes>
   );
 }

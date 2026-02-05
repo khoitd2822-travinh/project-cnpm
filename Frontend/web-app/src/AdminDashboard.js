@@ -62,7 +62,7 @@ const AdminDashboard = () => {
                         {/* Cards Thống kê */}
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '25px' }}>
                             <div style={cardStyle}>
-                                <h3 style={{ fontSize: '28px', margin: '0', color: '#2ecc71' }}>{stats.conf_count}</h3>
+                                <h3 style={{ fontSize: '28px', margin: '0', color: '#2ecc71' }}>1</h3>
                                 <p style={{ color: '#7f8c8d', margin: '10px 0 0' }}>Hội nghị thực tế</p>
                             </div>
                             <div style={cardStyle}>
@@ -133,14 +133,43 @@ const AdminDashboard = () => {
                 )}
 
                 {activeTab === 'conferences' && (
-                    <div style={tableContainer}>
-                        <h1>Quản lý hội nghị</h1>
-                        <div style={{ padding: '40px', textAlign: 'center', color: '#95a5a6' }}>
-                            <p style={{ fontSize: '50px' }}>📅</p>
-                            <p>Chức năng quản lý hội nghị đang được phát triển...</p>
-                        </div>
-                    </div>
-                )}
+    <div style={{ ...tableContainer, textAlign: 'center', padding: '60px 40px' }}>
+        {/* 1. Tiêu đề to và in đậm nằm trên cùng */}
+        <h1 style={{ 
+            fontSize: '36px', 
+            fontWeight: 'bold', 
+            color: '#2c3e50', 
+            marginBottom: '10px',
+            textTransform: 'uppercase',
+            letterSpacing: '1px'
+        }}>
+            Hội nghị nghiên cứu khoa học
+        </h1>
+
+        {/* 2. Tên viết tắt hội nghị */}
+        <h2 style={{ 
+            fontSize: '22px', 
+            color: '#3498db', 
+            fontWeight: 'bold', 
+            marginBottom: '40px' 
+        }}>
+            UTH-ConfMS
+        </h2>
+
+        {/* 3. Logo trường UTH nằm ở dưới */}
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <img 
+                 
+                 
+                style={{ 
+                    width: '550px', 
+                    height: 'auto', 
+                    filter: 'drop-shadow(0px 4px 8px rgba(0,0,0,0.1))' 
+                }} 
+            />
+        </div>
+    </div>
+)}
             </div>
         </div>
     );
