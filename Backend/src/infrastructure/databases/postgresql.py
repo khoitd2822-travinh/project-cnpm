@@ -1,10 +1,17 @@
+import os
+from pathlib import Path
+from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from config import Config
 from infrastructure.databases.base import Base
 
-#DATABASE_URI = Config.DATABASE_URI
-DATABASE_URI = "postgresql://postgres:1234@localhost:5432/postgres"
+# Load .env from Backend folder (parent of src)
+env_path = Path(__file__).resolve().parent.parent.parent / '.env'
+load_dotenv(dotenv_path=env_path)
+
+# Use DATABASE_URL from .env, fallback to Config, then fallback to default
+DATABASE_URI = os.getenv('DATABASE_URL') or Config.DATABASE_URI or "postgresql+psycopg2://postgres:1234@127.0.0.1:5432/postgres"
 
 engine = create_engine(
     DATABASE_URI,

@@ -5,11 +5,13 @@ const AdminDashboard = () => {
     const [activeTab, setActiveTab] = useState('stats');
     const [stats, setStats] = useState({ user_count: 0, conf_count: 0, paper_count: 0, activities: [] });
     const [users, setUsers] = useState([]);
+    
+    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://127.0.0.1:5000/api';
 
     // 1. Lấy dữ liệu thống kê tổng quan
     const fetchStats = async () => {
         try {
-            const res = await axios.get('http://127.0.0.1:5000/api/admin/stats');
+            const res = await axios.get(`${API_BASE_URL}/admin/stats`);
             setStats(res.data);
         } catch (err) {
             console.error("Lỗi tải thống kê:", err);
@@ -19,7 +21,7 @@ const AdminDashboard = () => {
     // 2. Lấy danh sách người dùng
     const fetchUsers = async () => {
         try {
-            const res = await axios.get('http://127.0.0.1:5000/api/admin/users');
+            const res = await axios.get(`${API_BASE_URL}/admin/users`);
             setUsers(res.data);
             setActiveTab('users');
         } catch (err) {
