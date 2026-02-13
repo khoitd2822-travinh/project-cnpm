@@ -71,11 +71,23 @@
 ├── 📄 README.md                # Tài liệu hướng dẫn sử dụng dự án
 └── 📄 requirements.txt         # Danh sách thư viện Python cần cài đặt
 ```
+
 # Download source code (CMD)
-    git clone https://github.com/khoitd2822-travinh/project-cnpm.git
+    git clone https://github.com/khoitd2822-travinh/project-cnpm.git    
 
 # Kiểm tra cài đặt python chưa
     python --version
+
+# Kết nối DATABASE ( Khuyên dùng Docker )
+## Bước 1 : Tải Docker
+## Bước 2 : Kết nối với cầu hình sau 
+    Database Image: postgres:latest
+    User/Pass: postgres / 1234
+    Link kết nối nội bộ: postgresql://postgres:1234@db:5432/postgres
+
+## Bước 3 : Chạy lệnh sau, Docker tự động kết nối 
+    docker-compose up --build
+    
 
 # Run app : Backend.
 ## Bước 1 : Tạo môi trường ảo Python
