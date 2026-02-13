@@ -1,72 +1,49 @@
 # project-CNPM
 
+```text
 ├── 📂 Backend/                 # Mã nguồn xử lý phía Server
-│   ├── 📂 src/                             
-│   │   ├── api/
-│   │   │   ├── controllers/
-│   │   │   │   └── 📄 auth_controller.py
-│   │   │   ├── 📄 __init__.py
-│   │   │   └── 📄 auth_api.py 
-│   │   ├── domain/ 
-│   │   │   └── 📄 user.py
-│   │   ├── infrastructure/
-│   │   │   ├── databases/ 
-│   │   │   │   ├── 📄 __init__.py
-│   │   │   │   ├── 📄 base.py
-│   │   │   │   ├── 📄 postgresql.py
-│   │   │   │   └── 📄 seed_data.sql
-│   │   │   ├── Model/ 
-│   │   │   │   ├── 📄 assignment_model.py
-│   │   │   │   ├── 📄 audilog_model.py
-│   │   │   │   ├── 📄 cameraready_model.py
-│   │   │   │   ├── 📄 conference_model.py
-│   │   │   │   ├── 📄 decision_model.py
-│   │   │   │   ├── 📄 paper_model.py
-│   │   │   │   ├── 📄 review_model.py
-│   │   │   │   ├── 📄 track_model.py  
-│   │   │   │   └── 📄 user_model.py
-│   │   │   ├── persistence/
-│   │   │   │   ├── 📄 audit_repository.py
-│   │   │   │   ├── 📄 paper_repository.py
-│   │   │   │   ├── 📄 reviewer_repository.py
-│   │   │   │   └── 📄 user_repository.py
-│   │   │   └── 📄 __init__.py
-│   │   ├── services/
-│   │   │   ├── application
-│   │   │   │   ├── use_cases 
-│   │   │   │   └── 📄 assign_paper_use_case.py
-│   │   │   ├── entities/
-│   │   │   │   ├── 📄 paper.py
-│   │   │   │   └── 📄 reviewer.py
-│   │   │   ├── interface
-│   │   │   │   ├── controller
-│   │   │   │   └── 📄 paper_controller.py
-│   │   │   ├── repository/
-│   │   │   │   ├── 📄 paper_repository.py
-│   │   │   │   └── 📄 reviewer_repository.py
-│   │   │   ├── 📄 auth_service.py
-│   │   │   ├── 📄 author_routes.py
-│   │   ├── 📄 admin_endpoints.py        
-│   │   ├── 📄 admin_service.py
-│   │   ├── 📄 __init__.py
-│   │   ├── 📄 app.py
-│   │   ├── 📄 config.py
-│   │   ├── 📄 main.py
-│   │   └──  📄 models.py 
-│   └── 📄 assign_paper.py                 
-├── 📂 Frontend/                # Mã nguồn giao diện người dùng
-│   └── 📂 web-app/             # Dự án chính của Frontend
-│   │   ├── 📂 public/          # Chứa các file tĩnh (ảnh, icon)
-│   │   ├── 📂 src/
-│   │   │   ├── 📄 AdminDashboard.js
-│   │   │   ├── 📄 App.css
-│   │   │   ├── 📄 App.js
-│   │   │   ├── 📄 AuthorDashboard.js
-│   │   │   ├── 📄 ChairDashboard.js
-│   │   │   ├── 📄 index.css
-│   │   │   ├── 📄 index.js
-│   │   │   └── 📄 ReviewerDashboard.js
-│   │   └── 📄 package.json     # Quản lý thư viện của Frontend
-├── 📄 .gitignore               # Chỉ định các file/thư mục không đưa lên GitHub
-├── 📄 README.md                # Tài liệu hướng dẫn sử dụng dự án
-└── 📄 requirements.txt         # Danh sách thư viện Python cần cài đặt
+│   └── 📂 src/
+│       ├── 📂 api/
+│       │   ├── 📂 controllers/
+│       │   │   └── 📄 auth_controller.py
+│       │   ├── 📄 __init__.py
+│       │   └── 📄 auth_api.py
+│       ├── 📂 domain/
+│       │   └── 📄 user.py
+│       ├── 📂 infrastructure/
+│       │   ├── 📂 databases/
+│       │   │   ├── 📄 base.py
+│       │   │   ├── 📄 postgresql.py
+│       │   │   └── 📄 seed_data.sql
+│       │   ├── 📂 Model/
+│       │   │   ├── 📄 assignment_model.py
+│       │   │   ├── 📄 user_model.py
+│       │   │   └── 📄 ... (các model khác)
+│       │   └── 📂 persistence/
+│       │       ├── 📄 user_repository.py
+│       │       └── 📄 ... (các repository khác)
+│       ├── 📂 services/
+│       │   ├── 📂 application/use_cases/
+│       │   │   └── 📄 assign_paper_use_case.py
+│       │   ├── 📂 entities/
+│       │   │   ├── 📄 paper.py
+│       │   │   └── 📄 reviewer.py
+│       │   ├── 📂 interface/controller/
+│       │   │   └── 📄 paper_controller.py
+│       │   ├── 📂 repository/
+│       │   ├── 📄 auth_service.py
+│       │   └── 📄 author_routes.py
+│       ├── 📄 app.py
+│       ├── 📄 config.py
+│       ├── 📄 main.py
+│       └── 📄 models.py
+├── 📂 Frontend/web-app/        # Mã nguồn giao diện người dùng
+│   ├── 📂 public/              # File tĩnh (ảnh, icon)
+│   ├── 📂 src/
+│   │   ├── 📄 AdminDashboard.js
+│   │   ├── 📄 AuthorDashboard.js
+│   │   ├── 📄 App.js
+│   │   └── 📄 index.js
+│   └── 📄 package.json         # Quản lý thư viện Frontend
+├── 📄 .gitignore               # Cấu hình loại bỏ file rác
+└── 📄 requirements.txt         # Danh sách thư viện Python
