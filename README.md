@@ -80,7 +80,7 @@
 
 # Kết nối DATABASE ( Khuyên dùng Docker )
 ## Bước 1 : Tải Docker
-## Bước 2 : Kết nối với cầu hình sau 
+## Bước 2 : Kết nối với cấu hình sau 
     Database Image: postgres:latest
     User/Pass: postgres / 1234
     Link kết nối nội bộ: postgresql://postgres:1234@db:5432/postgres
