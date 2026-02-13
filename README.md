@@ -1,4 +1,4 @@
-# project-CNPM
+# Project-CNPM
 ```
 ├── 📂 Backend/                 # Mã nguồn xử lý phía Server
 │   ├── 📂 src/                             
@@ -70,3 +70,32 @@
 ├── 📄 .gitignore               # Chỉ định các file/thư mục không đưa lên GitHub
 ├── 📄 README.md                # Tài liệu hướng dẫn sử dụng dự án
 └── 📄 requirements.txt         # Danh sách thư viện Python cần cài đặt
+```
+# Download source code (CMD)
+    git clone https://github.com/khoitd2822-travinh/project-cnpm.git
+
+# Kiểm tra cài đặt python chưa
+    python --version
+
+# Run app : Chạy Backend.
+## Bước 1 : Tạo môi trường ảo Python
+# Windows :
+  	py -m venv .venv
+
+# Unix/MacOS : 
+   	python3 -m venv .venv
+
+## Bước 2 : Kích hoạt môi trường ảo ( Window )
+    .\Backend\.venv\Scripts\activate
+
+## Bước 3 : Di chuyển đến thư mục và chạy Backend, lần lượt từng dòng ( Window )
+    cd Backend/src
+    python app.py
+## Chạy thành công Backend, mở thêm cửa sổ terminal chạy Frontend ( Backend chạy song song cùng Frontend )
+# Chạy Frontend.
+## Bước 4 : Di chuyển thư mục và cài đặt thư viện ( chạy từng dòng ) 
+    cd Frontend/web-app
+    npm install
+## Bước 5 : Khởi chạy giao diện 
+    npm start
+
