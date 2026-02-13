@@ -77,25 +77,34 @@
 # Kiểm tra cài đặt python chưa
     python --version
 
-# Run app : Chạy Backend.
+# Run app : Backend.
 ## Bước 1 : Tạo môi trường ảo Python
-# Windows :
+### Windows :
   	py -m venv .venv
 
-# Unix/MacOS : 
+### Unix/MacOS : 
    	python3 -m venv .venv
 
 ## Bước 2 : Kích hoạt môi trường ảo ( Window )
     .\Backend\.venv\Scripts\activate
 
 ## Bước 3 : Di chuyển đến thư mục và chạy Backend, lần lượt từng dòng ( Window )
+### Di chuyển thư mục 
     cd Backend/src
+
+### Chạy Backend    
     python app.py
+    
 ## Chạy thành công Backend, mở thêm cửa sổ terminal chạy Frontend ( Backend chạy song song cùng Frontend )
-# Chạy Frontend.
+
+#  Frontend.
 ## Bước 4 : Di chuyển thư mục và cài đặt thư viện ( chạy từng dòng ) 
+### Di chuyển thư mục 
     cd Frontend/web-app
+    
+### Cài đặt thư viện
     npm install
+    
 ## Bước 5 : Khởi chạy giao diện 
     npm start
 
